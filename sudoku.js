@@ -83,8 +83,7 @@ function valid_check(cell, value) {
     }
     return true;
 }
-
-function solve_sudoku(random_row) {
+const solve_sudoku = (random_row) => {
 	let numbers = [1,2,3,4,5,6,7,8,9];
 	// cell index
 	let i = 0; 
@@ -134,9 +133,60 @@ function solve_sudoku(random_row) {
 		if (i == 81) { break; } // stops the loop when we are done with last cell
 	}
 }
+/*
+function solve_sudoku(random_row) {
+	let numbers = [1,2,3,4,5,6,7,8,9];
+	// cell index
+	let i = 0; 
+	// numbers-array index
+	let n = 0; 
+	// direction of backtracking (1 = forward)  
+	let m = 1; 
+	// used if generating sudoku (g=1) 
+	let nums = [1,2,3,4,5,6,7,8,9]; 
+
+	while (true) {
+		// creates a random first row if generating
+		if (i < 9 && random_row) { 
+			var random_value = nums[Math.floor(Math.random()*nums.length)];
+			// removes used value
+			nums.splice(nums.indexOf(random_value),1); 
+			// assigns value
+			cells[i].value = random_value; 
+			i++; 
+			// tries solving cell
+		} else if (cells[i].a == 1) { 
+			if (valid_check(cells[i], numbers[n])) {
+                // this is run if valid number is found
+				cells[i].value = numbers[n]; 
+				i++;     
+				n = 0;  
+				m = 1;  
+			} else {
+				if (n == 8) {
+                    // this is run if we are at the end of numbers array (no more possible values)
+					cells[i].value = 0; // removes value
+					i--;    // steps to previous cell
+					m = 0;  // direction: backwards
+					if (cells[i].value == 9) { i--; }
+					n = cells[i].value;
+				} else {
+                    // this is run if we have not found valid value and we are not at the end of possible values
+					n++; // goes to next number in numbers array
+				}
+			}
+		} else {
+            // this is run if we hit a cell with static value,
+            // moves backwards/forwards based on m variable
+			if (m) { i++; }
+            else { i--; }
+		}
+		if (i == 81) { break; } // stops the loop when we are done with last cell
+	}
+}*/
 
 function generate_sudoku() {
-    /* this function is used in the generation of the sudoku */
+    //this function is used in the generation of the sudoku 
 
 	for (cell of cells) { cell.a = 1; } // makes all cells-editable
 
@@ -151,27 +201,20 @@ function generate_sudoku() {
 	}
 }
 
-function load_sudoku() {
-	var i = 0;
-	var sudoku = import_puzzle();
-	for (var c = 0; c < 9; c++) {
-		for (var r = 0; r < 9; r++) {
-			if (sudoku[c][r] != 0) {
+
+const load_sudoku = () => {
+	let i = 0;
+	let sudoku = import_puzzle();
+	for (let c = 0; c < 9; c++) {
+		for (let r = 0; r < 9; r++) {
+			if (sudoku[c][r] != 0 ) {
 				cells[i].value = sudoku[c][r];
 			} else {
-				cells[i].a = 1; // unlocks cells without values
+				cells[i].a = 1
 			}
-			i++;
 		}
 	}
 }
-
-/*function clear_gui() {
-	for (cell of cells) {
-		cell.value = "";    // removes value
-		cell.a = 0;         // locks all cells (default) 
-	}
-}*/
 
 const clear_gui = () => {
 	for (cell of cells) {
