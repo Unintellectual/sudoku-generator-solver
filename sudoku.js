@@ -29,7 +29,7 @@ function sudoku_GUI() {
             input.row = r;
             input.column = c;
             input.square = square_number(r, c);
-            input.onkeypress = validate; // validates that a number is entered
+            input.addEventListener = validate; // validates that a number is entered
 
             // creates and places input field in cell-element
             const cell = document.createElement("td");
@@ -42,13 +42,12 @@ function sudoku_GUI() {
     }
 }
 
-function validate(evt) {
-    // this stops all non-numeric input
-    evt = (evt) ? evt : window.addEventListener;
-    var key = evt.keyCode || evt.which;
-    key = String.fromCharCode(key);
+const validate = (evt) => {
+	evt = (evt) ? evt : window.addEventListener;
+	let key = evt.keyCode || evt.which;
+	key = String.fromCharCode(key);
 
-    var regex = /[0-9]|\./;
+	var regex = /[0-9]|\./;
     if ( !regex.test(key) ) {
         evt.returnValue = false;
         if (evt.preventDefault) { evt.preventDefault(); }
@@ -58,17 +57,29 @@ function validate(evt) {
 function square_number(row, column) {
     /* this function returns square number of cell with 
        position x, y   */
-    if (row < 3 && column < 3) { return 0; }
-    if (row > 2 && row < 6 && column < 3) { return 1; }
-    if (row > 5 && column < 3) { return 2; }
-    if (row < 3 && column > 2 && column < 6) { return 3; }
-    if (row > 2 && row < 6 && column > 2 && column < 6) { return 4; }
-    if (row > 5 && column > 2 && column < 6) { return 5; }
-    if (row < 3 && column > 5) { return 6; }
-    if (row > 2 && row < 6 && column > 5) { return 7; }
-    if (row > 5 && column > 5) { return 8; }
+    switch (true) {
+        case (row < 3 && column < 3):
+            return 0;
+        case (row > 2 && row < 6 && column < 3):
+            return 1;
+        case (row > 5 && column < 3):
+            return 2;
+        case (row < 3 && column > 2 && column < 6):
+            return 3;
+        case (row > 2 && row < 6 && column > 2 && column < 6):
+            return 4;
+        case (row > 5 && column > 2 && column < 6):
+            return 5;
+        case (row < 3 && column > 5):
+            return 6;
+        case (row > 2 && row < 6 && column > 5):
+            return 7;
+        case (row > 5 && column > 5):
+            return 8;
+        default:
+            return -1; // or whatever you want to return for invalid inputs
+    }
 }
-
 function valid_check(cell, value) { 
     /* this function checks if value is valid. it follow the standard
        sudoku rules in this check */
@@ -83,6 +94,7 @@ function valid_check(cell, value) {
     }
     return true;
 }
+
 const solve_sudoku = (random_row) => {
 	let numbers = [1,2,3,4,5,6,7,8,9];
 	// cell index
@@ -133,57 +145,6 @@ const solve_sudoku = (random_row) => {
 		if (i == 81) { break; } // stops the loop when we are done with last cell
 	}
 }
-/*
-function solve_sudoku(random_row) {
-	let numbers = [1,2,3,4,5,6,7,8,9];
-	// cell index
-	let i = 0; 
-	// numbers-array index
-	let n = 0; 
-	// direction of backtracking (1 = forward)  
-	let m = 1; 
-	// used if generating sudoku (g=1) 
-	let nums = [1,2,3,4,5,6,7,8,9]; 
-
-	while (true) {
-		// creates a random first row if generating
-		if (i < 9 && random_row) { 
-			var random_value = nums[Math.floor(Math.random()*nums.length)];
-			// removes used value
-			nums.splice(nums.indexOf(random_value),1); 
-			// assigns value
-			cells[i].value = random_value; 
-			i++; 
-			// tries solving cell
-		} else if (cells[i].a == 1) { 
-			if (valid_check(cells[i], numbers[n])) {
-                // this is run if valid number is found
-				cells[i].value = numbers[n]; 
-				i++;     
-				n = 0;  
-				m = 1;  
-			} else {
-				if (n == 8) {
-                    // this is run if we are at the end of numbers array (no more possible values)
-					cells[i].value = 0; // removes value
-					i--;    // steps to previous cell
-					m = 0;  // direction: backwards
-					if (cells[i].value == 9) { i--; }
-					n = cells[i].value;
-				} else {
-                    // this is run if we have not found valid value and we are not at the end of possible values
-					n++; // goes to next number in numbers array
-				}
-			}
-		} else {
-            // this is run if we hit a cell with static value,
-            // moves backwards/forwards based on m variable
-			if (m) { i++; }
-            else { i--; }
-		}
-		if (i == 81) { break; } // stops the loop when we are done with last cell
-	}
-}*/
 
 function generate_sudoku() {
     //this function is used in the generation of the sudoku 
